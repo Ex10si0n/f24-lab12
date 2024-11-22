@@ -1,5 +1,7 @@
 package edu.cmu.DirManager;
 
+import java.nio.file.InvalidPathException;
+
 public class Manager {
     private DirOps dirOps;
 
@@ -7,11 +9,18 @@ public class Manager {
      * Creates a new directory at the specified path.
      *
      * @param path the path where the new directory should be created
-     * @return 0 if the directory creation was successful,
-     *        -1 if the directory already exists,
-     *        -2 if the path is invalid
+     * @return 0 if the directory creation was successful
+     * -1 if the directory already exists,
+     * -2 if the path is invalid
      */
-    public int newDirectory(String path) {
-        return dirOps.createDirectory(path);
+    public int newDirectory(String path) throws InvalidPathException {
+        if (dirOps.checkDirectoryExists(path)) {
+            throw new InvalidPathException(path, "Directory already exists.");
+        } else if (!dirOps.checkPathValid(path)) {
+            throw new InvalidPathException(path, "Invalid path.");
+        } else {
+            dirOps.createDirectory(path);
+            return 0;
+        }
     }
 }
